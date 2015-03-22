@@ -28,10 +28,15 @@ $(document).ready(function(){
   	$("#guessButton").click(function() {
   		event.preventDefault();
   		var guess = parseInt($('#userGuess').val(), 10);
-  		guessCount++;
-  		$('#count').text(guessCount);
-		$('#guessList').append('<li>' + guess + '</li>');
-  		$('#feedback').html(checkGuess(guess));
+  		if (guess != guess) {
+  			alert("Please enter a valid number.");
+  			$('#userGuess').val('');
+  		} else {
+	  		guessCount++;
+	  		$('#count').text(guessCount);
+			$('#guessList').append('<li>' + guess + '</li>');
+	  		$('#feedback').html(checkGuess(guess));
+  		}
   	});
 
 });
@@ -44,7 +49,7 @@ function setNumber() {
 /*--- Start reset game and choose a new secret number ---*/
 function newGame() {
 	$('#feedback').text("Make your Guess!");
-	$('#userGuess').text("");
+	$('#userGuess').val("");
 	guessCount = 0;
 	$('#count').text(guessCount);
 	$('#guessList').html("");
@@ -53,7 +58,9 @@ function newGame() {
 
 /*--- Check the user's guess ---*/
 function checkGuess(userGuess) {
-	if(userGuess === secretNumber) {
+	if(isNaN(userGuess)) {
+		return "Not a number.";
+	} else if(userGuess === secretNumber) {
 		return "You Win!";
 	} else if (Math.abs(userGuess - secretNumber) >= 50) {
 		return "Ice cold.";
