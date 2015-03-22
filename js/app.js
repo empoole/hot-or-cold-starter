@@ -24,21 +24,19 @@ $(document).ready(function(){
   		newGame();
   	})
 
-  	/*--- Check the user's guess ---*/
+  	/*--- Check guess whent the user clicks the guess button ---*/
   	$("#guessButton").click(function() {
   		event.preventDefault();
-  		var guess = parseInt($('#userGuess').val(), 10);
-  		if (guess != guess) {
-  			alert("Please enter a valid number.");
-  			$('#userGuess').val('');
-  		} else {
-	  		guessCount++;
-	  		$('#count').text(guessCount);
-			$('#guessList').append('<li>' + guess + '</li>');
-	  		$('#feedback').html(checkGuess(guess));
-  		}
+  		submitGuess();
   	});
 
+  	/*--- Check guess when user presses enter ---*/
+  	$("#userGuess").keypress(function(event) {
+  		if (event.which === 13) {
+  			event.preventDefault();
+  			submitGuess();
+  		}
+  	})
 });
 
 /*--- Set the secret number ---*/
@@ -46,20 +44,42 @@ function setNumber() {
 	secretNumber = Math.ceil(Math.random() * 99);
 }
 
-/*--- Start reset game and choose a new secret number ---*/
+/*--- Reset game and choose a new secret number ---*/
 function newGame() {
 	$('#feedback').text("Make your Guess!");
-	$('#userGuess').val("");
+	clearGuess();
 	guessCount = 0;
 	$('#count').text(guessCount);
 	$('#guessList').html("");
 	setNumber();
 }
 
-/*--- Check the user's guess ---*/
+/*--- Clear the guess field ---*/
+function clearGuess() {
+	$('#userGuess').val("");
+}
+
+/*--- Submit the user's guess ---*/
+function submitGuess() {
+	var guess = parseInt($('#userGuess').val(), 10);
+	if (guess != guess) {
+		alert("Please enter a valid number.");
+		$('#userGuess').val('');
+	} else {
+		guessCount++;
+		$('#count').text(guessCount);
+		$('#guessList').append('<li>' + guess + '</li>');
+		$('#feedback').html(checkGuess(guess));
+	}
+	clearGuess();
+}
+
+/*--- Check the user's guess and give feedback ---*/
 function checkGuess(userGuess) {
 	if(isNaN(userGuess)) {
 		return "Not a number.";
+	} else if (userGuess > 100) {
+		return "You guess should be between 1 and 100."
 	} else if(userGuess === secretNumber) {
 		return "You Win!";
 	} else if (Math.abs(userGuess - secretNumber) >= 50) {
@@ -73,6 +93,6 @@ function checkGuess(userGuess) {
 	} else if(Math.abs(userGuess - secretNumber) >= 3) {
 		return "Hot.";
 	} else if (Math.abs(userGuess - secretNumber) >= 1) {
-		return "Surface of the Sun.";
+		return "Searing.";
 	}
 }
